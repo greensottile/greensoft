@@ -4,15 +4,19 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 
+# ======== CONFIGURACIÓN PARA STREAMLIT COMMUNITY CLOUD =========
+# Leemos las credenciales y el Sheet ID desde st.secrets.
 SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-# Leer credenciales y Sheet ID desde Secrets
+# Credenciales y hoja desde secrets
 creds = Credentials.from_service_account_info(st.secrets["gspread_key"], scopes=SCOPES)
 client = gspread.authorize(creds)
-SHEET_ID = st.secrets["1hTl89EA7x_wx9Cci6fGBiS2lXedM_ac_fZEK3Jmy1iM"]
+SHEET_ID = st.secrets["SHEET_ID"]
 
 def guardar_en_sheets(hoja, datos):
+    # Abre la hoja indicada en la Spreadsheet
     sheet = client.open_by_key(SHEET_ID).worksheet(hoja)
+    # Agrega la fila al final
     sheet.append_row(datos)
 
 st.title("Registro de Eventos - Granja Porcina")
@@ -32,13 +36,15 @@ if opcion == "Partos":
     bv = st.number_input("B.V.", min_value=0, step=1)
 
     if st.button("Guardar Parto"):
-        datos = [madre,
-                 fecha.strftime("%Y-%m-%d"),
-                 nacidos_vivos,
-                 natimortos,
-                 momificados,
-                 mnac,
-                 bv]
+        datos = [
+            madre,
+            fecha.strftime("%Y-%m-%d"),
+            nacidos_vivos,
+            natimortos,
+            momificados,
+            mnac,
+            bv
+        ]
         guardar_en_sheets("Partos", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
@@ -57,10 +63,12 @@ elif opcion == "Muertes":
     causa_muerte = st.text_input("Causa")
 
     if st.button("Guardar Muertes"):
-        datos = [madre_muerte,
-                 fecha_muerte.strftime("%Y-%m-%d"),
-                 cantidad_muerte,
-                 causa_muerte]
+        datos = [
+            madre_muerte,
+            fecha_muerte.strftime("%Y-%m-%d"),
+            cantidad_muerte,
+            causa_muerte
+        ]
         guardar_en_sheets("Muertes", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
@@ -79,10 +87,12 @@ elif opcion == "Movimientos":
     cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
 
     if st.button("Guardar Movimiento"):
-        datos = [donadora,
-                 receptora,
-                 fecha_mov.strftime("%Y-%m-%d"),
-                 cantidad_mov]
+        datos = [
+            donadora,
+            receptora,
+            fecha_mov.strftime("%Y-%m-%d"),
+            cantidad_mov
+        ]
         guardar_en_sheets("Movimientos", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
@@ -100,7 +110,11 @@ elif opcion == "Destete":
     cantidad = st.number_input("Cantidad Destetada", min_value=0, step=1)
 
     if st.button("Guardar Destete"):
-        datos = [madre, fecha.strftime("%Y-%m-%d"), cantidad]
+        datos = [
+            madre,
+            fecha.strftime("%Y-%m-%d"),
+            cantidad
+        ]
         guardar_en_sheets("Destetes", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
@@ -117,7 +131,10 @@ elif opcion == "Servicio":
     fecha = st.date_input("Fecha de Servicio")
 
     if st.button("Guardar Servicio"):
-        datos = [madre, fecha.strftime("%Y-%m-%d")]
+        datos = [
+            madre,
+            fecha.strftime("%Y-%m-%d")
+        ]
         guardar_en_sheets("Servicios", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
