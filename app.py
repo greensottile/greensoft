@@ -1,62 +1,139 @@
 import streamlit as st
 import pandas as pd
-import io
+import gspread
+from google.oauth2.service_account import Credentials
 from datetime import datetime
 
-# Función para cargar datos en memoria
-@st.cache_data
-def cargar_datos():
-    return pd.DataFrame(columns=["Fecha", "Evento", "ID Madre", "Cantidad", "Ubicación", "Observaciones"])
+# ======== CONFIGURACIÓN =========
+# 📌 Ruta al archivo JSON de credenciales (solo para uso local)
+CREDENTIALS_FILE = "credenciales.json"  # Asegúrate de que este archivo está en tu carpeta
 
-# Función para guardar datos en memoria
-def guardar_datos(df, nuevo_dato):
-    df = pd.concat([df, pd.DataFrame([nuevo_dato])], ignore_index=True)
-    return df
+# 📌 ID de tu Google Sheets (cambia esto por el ID real de tu hoja)
+SHEET_ID = "1hTl89EA7x_wx9Cci6fGBiS2lXedM_ac_fZEK3Jmy1iM"
 
-# Interfaz de usuario
-st.title("Registro de Eventos - Granja de Cerdos")
+# ======== CONEXIÓN =========
+# Definir el alcance (permite acceso a Google Sheets y Drive)
+SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-df = cargar_datos()
+# Autenticación con las credenciales
+creds = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+client = gspread.authorize(creds)
 
-# Selección de evento
-evento = st.selectbox("Seleccione un evento", ["Nacimiento", "Destete", "Baja", "Tratamiento", "Inseminación", "Movimiento", "Pasaje de lechones", "Fallecido"])
+# Función para guardar datos en Google Sheets
+def guardar_en_sheets(hoja, datos):
+    # Abre la hoja indicada en la Spreadsheet
+    sheet = client.open_by_key(SHEET_ID).worksheet(hoja)
+    # Agrega la fila al final
+    sheet.append_row(datos)
 
-# Entrada de datos
-id_madre = st.text_input("ID de la madre (opcional)")
-cantidad = st.number_input("Cantidad", min_value=1, step=1)
-ubicacion = st.text_input("Ubicación (sala, corral, etc.)")
-observaciones = st.text_area("Observaciones (opcional)")
-fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+st.title("Registro de Eventos - Granja Porcina")
 
-# Botón para guardar
-guardar = st.button("Registrar Evento")
-if guardar:
-    nuevo_dato = {
-        "Fecha": fecha,
-        "Evento": evento,
-        "ID Madre": id_madre,
-        "Cantidad": cantidad,
-        "Ubicación": ubicacion,
-        "Observaciones": observaciones,
-    }
-    df = guardar_datos(df, nuevo_dato)
-    st.success("Evento registrado con éxito")
+# Menú principal en un Radio Button
+opcion = st.radio("Selecciona una opción:", ["Partos", "Muertes", "Movimientos", "Destete", "Servicio"], index=0)
 
-# Mostrar datos registrados
-st.subheader("Registros recientes")
-st.dataframe(df)
+# Sección PARTOS
+if opcion == "Partos":
+    st.header("Registro de Partos")
+    madre = st.text_input("Madre")
+    fecha = st.date_input("Fecha")
+    nacidos_vivos = st.number_input("Nacidos Vivos", min_value=0, step=1)
+    natimortos = st.number_input("Natimortos", min_value=0, step=1)
+    momificados = st.number_input("Momificados", min_value=0, step=1)
+    mnac = st.number_input("MNac", min_value=0, step=1)
+    bv = st.number_input("B.V.", min_value=0, step=1)
 
-# Botón para descargar el archivo Excel
-def convertir_a_excel(df):
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False, sheet_name='Eventos')
-    processed_data = output.getvalue()
-    return processed_data
+    if st.button("Guardar Parto"):
+        datos = [madre,
+                 fecha.strftime("%Y-%m-%d"),
+                 nacidos_vivos,
+                 natimortos,
+                 momificados,
+                 mnac,
+                 bv]
+        guardar_en_sheets("Partos", datos)
+        st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
-st.download_button(
-    label="Descargar registros en Excel",
-    data=convertir_a_excel(df),
-    file_name="registro_eventos.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-)
+        # Mostrar el último registro guardado en pantalla
+        columnas_partos = ["Madre", "Fecha", "Nacidos Vivos", "Natimortos", "Momificados", "MNac", "B.V."]
+        df_partos = pd.DataFrame([datos], columns=columnas_partos)
+        st.subheader("Último registro (Partos)")
+        st.table(df_partos)
+
+# Sección MUERTES
+elif opcion == "Muertes":
+    st.header("Registro de Muertes")
+    madre_muerte = st.text_input("Madre")
+    fecha_muerte = st.date_input("Fecha Muerte")
+    cantidad_muerte = st.number_input("Cantidad Muertos", min_value=0, step=1, key='muerte')
+    causa_muerte = st.text_input("Causa")
+
+    if st.button("Guardar Muertes"):
+        datos = [madre_muerte,
+                 fecha_muerte.strftime("%Y-%m-%d"),
+                 cantidad_muerte,
+                 causa_muerte]
+        guardar_en_sheets("Muertes", datos)
+        st.success("Registro guardado exitosamente en Google Sheets 🚀")
+
+        # Mostrar el último registro guardado en pantalla
+        columnas_muertes = ["Madre", "Fecha Muerte", "Cantidad Muertos", "Causa"]
+        df_muertes = pd.DataFrame([datos], columns=columnas_muertes)
+        st.subheader("Último registro (Muertes)")
+        st.table(df_muertes)
+
+# Sección MOVIMIENTOS
+elif opcion == "Movimientos":
+    st.header("Registro de Movimientos (Lechones)")
+    donadora = st.text_input("Donadora")
+    receptora = st.text_input("Receptora")
+    fecha_mov = st.date_input("Fecha Movimiento")
+    cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
+
+    if st.button("Guardar Movimiento"):
+        datos = [donadora,
+                 receptora,
+                 fecha_mov.strftime("%Y-%m-%d"),
+                 cantidad_mov]
+        guardar_en_sheets("Movimientos", datos)
+        st.success("Registro guardado exitosamente en Google Sheets 🚀")
+
+        # Mostrar el último registro guardado en pantalla
+        columnas_mov = ["Donadora", "Receptora", "Fecha Movimiento", "Cantidad Lechones"]
+        df_mov = pd.DataFrame([datos], columns=columnas_mov)
+        st.subheader("Último registro (Movimientos)")
+        st.table(df_mov)
+
+# Sección DESTETE
+elif opcion == "Destete":
+    st.header("Registro de Destete")
+    madre = st.text_input("Madre")
+    fecha = st.date_input("Fecha Destete")
+    cantidad = st.number_input("Cantidad Destetada", min_value=0, step=1)
+
+    if st.button("Guardar Destete"):
+        datos = [madre, fecha.strftime("%Y-%m-%d"), cantidad]
+        guardar_en_sheets("Destetes", datos)
+        st.success("Registro guardado exitosamente en Google Sheets 🚀")
+
+        # Mostrar el último registro guardado en pantalla
+        columnas_destete = ["Madre", "Fecha Destete", "Cantidad Destetada"]
+        df_destete = pd.DataFrame([datos], columns=columnas_destete)
+        st.subheader("Último registro (Destete)")
+        st.table(df_destete)
+
+# Sección SERVICIO
+elif opcion == "Servicio":
+    st.header("Registro de Servicio")
+    madre = st.text_input("Madre")
+    fecha = st.date_input("Fecha de Servicio")
+
+    if st.button("Guardar Servicio"):
+        datos = [madre, fecha.strftime("%Y-%m-%d")]
+        guardar_en_sheets("Servicios", datos)
+        st.success("Registro guardado exitosamente en Google Sheets 🚀")
+
+        # Mostrar el último registro guardado en pantalla
+        columnas_servicio = ["Madre", "Fecha Servicio"]
+        df_serv = pd.DataFrame([datos], columns=columnas_servicio)
+        st.subheader("Último registro (Servicio)")
+        st.table(df_serv)
