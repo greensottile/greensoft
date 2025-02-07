@@ -11,7 +11,8 @@ SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/a
 st.write(st.secrets["gspread_key"])
 
 # Credenciales y hoja desde secrets
-creds = Credentials.from_service_account_info(st.secrets["gspread_key"], scopes=SCOPES)
+gspread_key_dict = json.loads(st.secrets["gspread_key"])
+creds = Credentials.from_service_account_info(gspread_key_dict, scopes=SCOPES)
 client = gspread.authorize(creds)
 SHEET_ID = st.secrets["SHEET_ID"]
 
