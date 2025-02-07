@@ -4,26 +4,15 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 
-# ======== CONFIGURACIÓN =========
-# 📌 Ruta al archivo JSON de credenciales (solo para uso local)
-CREDENTIALS_FILE = "credenciales.json"  # Asegúrate de que este archivo está en tu carpeta
-
-# 📌 ID de tu Google Sheets (cambia esto por el ID real de tu hoja)
-SHEET_ID = "1hTl89EA7x_wx9Cci6fGBiS2lXedM_ac_fZEK3Jmy1iM"
-
-# ======== CONEXIÓN =========
-# Definir el alcance (permite acceso a Google Sheets y Drive)
 SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-# Autenticación con las credenciales
-creds = Credentials.from_service_account_file(CREDENTIALS_FILE, scopes=SCOPES)
+# Leer credenciales y Sheet ID desde Secrets
+creds = Credentials.from_service_account_info(st.secrets["gspread_key"], scopes=SCOPES)
 client = gspread.authorize(creds)
+SHEET_ID = st.secrets["1hTl89EA7x_wx9Cci6fGBiS2lXedM_ac_fZEK3Jmy1iM"]
 
-# Función para guardar datos en Google Sheets
 def guardar_en_sheets(hoja, datos):
-    # Abre la hoja indicada en la Spreadsheet
     sheet = client.open_by_key(SHEET_ID).worksheet(hoja)
-    # Agrega la fila al final
     sheet.append_row(datos)
 
 st.title("Registro de Eventos - Granja Porcina")
