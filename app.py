@@ -9,7 +9,7 @@ import json
 # Leemos las credenciales y el Sheet ID desde st.secrets.
 SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-st.write(st.secrets["gspread_key"])
+
 
 # Credenciales y hoja desde secrets
 gspread_key_dict = json.loads(st.secrets["gspread_key"])
@@ -23,7 +23,7 @@ def guardar_en_sheets(hoja, datos):
     # Agrega la fila al final
     sheet.append_row(datos)
 
-st.write(st.secrets["gspread_key"])
+
 
 st.title("Registro de Eventos - Granja Porcina")
 
