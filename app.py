@@ -135,18 +135,24 @@ elif opcion == "Destete":
 elif opcion == "Servicio":
     st.header("Registro de Servicio")
     madre = st.text_input("Madre")
-    fecha = st.date_input("Fecha de Servicio")
+    fecha_servicio = st.date_input("Fecha de Servicio")
+    padrillo = st.text_input("Padrillo")
+    funcionario = st.text_input("Funcionario")
+    observaciones_serv = st.text_area("Observaciones")
 
     if st.button("Guardar Servicio"):
         datos = [
             madre,
-            fecha.strftime("%Y-%m-%d")
+            fecha_servicio.strftime("%Y-%m-%d"),
+            padrillo,
+            funcionario,
+            observaciones_serv
         ]
         guardar_en_sheets("Servicios", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
         # Mostrar el último registro guardado en pantalla
-        columnas_servicio = ["Madre", "Fecha Servicio"]
+        columnas_servicio = ["Madre", "Fecha", "Padrillo", "Funcionario", "Observaciones"]
         df_serv = pd.DataFrame([datos], columns=columnas_servicio)
         st.subheader("Último registro (Servicio)")
         st.table(df_serv)
