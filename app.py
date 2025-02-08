@@ -27,7 +27,7 @@ opcion = st.radio("Selecciona una opción:", ["Partos", "Muertes", "Movimientos"
 # Sección PARTOS
 if opcion == "Partos":
     st.header("🐷 Registro de Partos")
-    madre = st.text_input("Madre")
+    madre = st.text_input("Madre", type="tel")
     fecha = st.date_input("Fecha", format="DD/MM/YYYY")
     fecha_str = fecha.strftime("%d-%m-%Y")
     nacidos_vivos = st.number_input("Nacidos Vivos", min_value=0, step=1)
@@ -83,8 +83,8 @@ elif opcion == "Muertes":
 # Sección MOVIMIENTOS
 elif opcion == "Movimientos":
     st.header("🚛 Registro de Movimientos (Lechones)")
-    donadora = st.text_input("Donadora")
-    receptora = st.text_input("Receptora")
+    donadora = st.text_input("Donadora", type="tel")
+    receptora = st.text_input("Receptora", type="tel")
     fecha_mov = st.date_input("Fecha Movimiento", format="DD/MM/YYYY")
     fecha_mov_str = fecha_mov.strftime("%d-%m-%Y")
     cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
