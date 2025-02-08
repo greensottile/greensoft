@@ -6,8 +6,7 @@ from datetime import datetime
 import locale
 
 # Configurar idioma español para las fechas
-#locale.setlocale(locale.LC_TIME, "es_ES.UTF-8")  # Para España
-locale.setlocale(locale.LC_TIME, "es_AR.UTF-8")  # Para Argentina u otros países hispanohablantes
+
 import json
 
 # ======== CONFIGURACIÓN PARA STREAMLIT COMMUNITY CLOUD =========
