@@ -48,6 +48,12 @@ if opcion == "Partos":
         ]
         guardar_en_sheets("Partos", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
+        
+        # Mostrar el último registro guardado en pantalla
+        columnas_partos = ["Madre", "Fecha", "Nacidos Vivos", "Natimortos", "Momificados", "MNac", "B.V."]
+        df_partos = pd.DataFrame([datos], columns=columnas_partos)
+        st.subheader("Último registro (Partos)")
+        st.table(df_partos)
 
 # Sección MUERTES
 elif opcion == "Muertes":
@@ -67,6 +73,12 @@ elif opcion == "Muertes":
         ]
         guardar_en_sheets("Muertes", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
+        
+        # Mostrar el último registro guardado en pantalla
+        columnas_muertes = ["Madre", "Fecha Muerte", "Cantidad Muertos", "Causa"]
+        df_muertes = pd.DataFrame([datos], columns=columnas_muertes)
+        st.subheader("Último registro (Muertes)")
+        st.table(df_muertes)
 
 # Sección MOVIMIENTOS
 elif opcion == "Movimientos":
@@ -86,6 +98,12 @@ elif opcion == "Movimientos":
         ]
         guardar_en_sheets("Movimientos", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
+        
+        # Mostrar el último registro guardado en pantalla
+        columnas_mov = ["Donadora", "Receptora", "Fecha Movimiento", "Cantidad Lechones"]
+        df_mov = pd.DataFrame([datos], columns=columnas_mov)
+        st.subheader("Último registro (Movimientos)")
+        st.table(df_mov)
 
 # Sección DESTETE
 elif opcion == "Destete":
@@ -107,6 +125,12 @@ elif opcion == "Destete":
         ]
         guardar_en_sheets("Destetes", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
+        
+        # Mostrar el último registro guardado en pantalla
+        columnas_destete = ["Madre", "Fecha Destete", "Destetados", "Lote", "Observaciones"]
+        df_destete = pd.DataFrame([datos], columns=columnas_destete)
+        st.subheader("Último registro (Destete)")
+        st.table(df_destete)
 
 # Sección SERVICIO
 elif opcion == "Servicio":
@@ -128,3 +152,9 @@ elif opcion == "Servicio":
         ]
         guardar_en_sheets("Servicios", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
+        
+        # Mostrar el último registro guardado en pantalla
+        columnas_servicio = ["Madre", "Fecha", "Padrillo", "Funcionario", "Observaciones"]
+        df_serv = pd.DataFrame([datos], columns=columnas_servicio)
+        st.subheader("Último registro (Servicio)")
+        st.table(df_serv)
