@@ -28,7 +28,8 @@ opcion = st.radio("Selecciona una opción:", ["Partos", "Muertes", "Movimientos"
 if opcion == "Partos":
     st.header("🐷 Registro de Partos")
     madre = st.text_input("Madre")
-    fecha = st.date_input("Fecha", format="%d-%m-%Y")
+    fecha = st.date_input("Fecha")
+    fecha_str = fecha_str
     nacidos_vivos = st.number_input("Nacidos Vivos", min_value=0, step=1)
     natimortos = st.number_input("Natimortos", min_value=0, step=1)
     momificados = st.number_input("Momificados", min_value=0, step=1)
@@ -52,7 +53,8 @@ if opcion == "Partos":
 elif opcion == "Muertes":
     st.header("⚠️ Registro de Muertes")
     madre_muerte = st.text_input("Madre")
-    fecha_muerte = st.date_input("Fecha Muerte", format="%d-%m-%Y")
+    fecha_muerte = st.date_input("Fecha Muerte")
+    fecha_muerte_str = fecha_muerte_str
     cantidad_muerte = st.number_input("Cantidad Muertos", min_value=0, step=1)
     causa_muerte = st.text_input("Causa")
 
@@ -71,7 +73,8 @@ elif opcion == "Movimientos":
     st.header("🚛 Registro de Movimientos (Lechones)")
     donadora = st.text_input("Donadora")
     receptora = st.text_input("Receptora")
-    fecha_mov = st.date_input("Fecha Movimiento", format="%d-%m-%Y")
+    fecha_mov = st.date_input("Fecha Movimiento")
+    fecha_mov_str = fecha_mov_str
     cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
 
     if st.button("Guardar Movimiento"):
@@ -88,7 +91,8 @@ elif opcion == "Movimientos":
 elif opcion == "Destete":
     st.header("🐖 Registro de Destete")
     madre = st.text_input("Madre")
-    fecha = st.date_input("Fecha Destete", format="%d-%m-%Y")
+    fecha = st.date_input("Fecha Destete")
+    fecha_str = fecha.strftime("%d-%m-%Y")
     destetados = st.number_input("Destetados", min_value=0, step=1)
     lote = st.text_input("Lote")
     observaciones = st.text_area("Observaciones")
@@ -108,7 +112,8 @@ elif opcion == "Destete":
 elif opcion == "Servicio":
     st.header("💉 Registro de Servicio")
     madre = st.text_input("Madre")
-    fecha_servicio = st.date_input("Fecha de Servicio", format="%d-%m-%Y")
+    fecha_servicio = st.date_input("Fecha de Servicio")
+    fecha_servicio_str = fecha_servicio_str
     padrillo = st.text_input("Padrillo")
     funcionario = st.text_input("Funcionario")
     observaciones_serv = st.text_area("Observaciones")
