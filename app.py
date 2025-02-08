@@ -3,13 +3,22 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
-import locale
-
 # Configurar idioma español para las fechas
 
 import json
 
 # ======== CONFIGURACIÓN PARA STREAMLIT COMMUNITY CLOUD =========
+
+def formato_fecha_español(fecha):
+    meses = {
+        "January": "Enero", "February": "Febrero", "March": "Marzo", "April": "Abril",
+        "May": "Mayo", "June": "Junio", "July": "Julio", "August": "Agosto",
+        "September": "Septiembre", "October": "Octubre", "November": "Noviembre", "December": "Diciembre"
+    }
+    fecha_str = fecha.strftime("%d de %B de %Y")
+    for eng, esp in meses.items():
+        fecha_str = fecha_str.replace(eng, esp)
+    return fecha_str
 st.set_page_config(page_title="Granja Porcina", page_icon="🐷", layout="centered")
 
 SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -33,7 +42,7 @@ if opcion == "Partos":
     st.header("🐷 Registro de Partos")
     madre = st.text_input("Madre")
     fecha = st.date_input("Fecha")
-    fecha_str = fecha.strftime("%d de %B de %Y")
+    fecha_str = formato_fecha_español(fecha)
     nacidos_vivos = st.number_input("Nacidos Vivos", min_value=0, step=1)
     natimortos = st.number_input("Natimortos", min_value=0, step=1)
     momificados = st.number_input("Momificados", min_value=0, step=1)
@@ -64,7 +73,7 @@ elif opcion == "Muertes":
     st.header("⚠️ Registro de Muertes")
     madre_muerte = st.text_input("Madre")
     fecha_muerte = st.date_input("Fecha Muerte")
-    fecha_muerte_str = fecha_muerte.strftime("%d de %B de %Y")
+    fecha_muerte_str = formato_fecha_español(fecha_muerte)
     cantidad_muerte = st.number_input("Cantidad Muertos", min_value=0, step=1)
     causa_muerte = st.text_input("Causa")
 
@@ -90,7 +99,7 @@ elif opcion == "Movimientos":
     donadora = st.text_input("Donadora")
     receptora = st.text_input("Receptora")
     fecha_mov = st.date_input("Fecha Movimiento")
-    fecha_mov_str = fecha_mov.strftime("%d de %B de %Y")
+    fecha_mov_str = formato_fecha_español(fecha_mov)
     cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
 
     if st.button("Guardar Movimiento"):
@@ -141,7 +150,7 @@ elif opcion == "Servicio":
     st.header("💉 Registro de Servicio")
     madre = st.text_input("Madre")
     fecha_servicio = st.date_input("Fecha de Servicio")
-    fecha_servicio_str = fecha_servicio.strftime("%d de %B de %Y")
+    fecha_servicio_str = formato_fecha_español(fecha_servicio)
     padrillo = st.text_input("Padrillo")
     funcionario = st.text_input("Funcionario")
     observaciones_serv = st.text_area("Observaciones")
