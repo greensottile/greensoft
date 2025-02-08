@@ -83,8 +83,8 @@ elif opcion == "Muertes":
 # Sección MOVIMIENTOS
 elif opcion == "Movimientos":
     st.header("🚛 Registro de Movimientos (Lechones)")
-    donadora = st.number_input("Donadora", min_value=0, step=1, format="%d")
-    receptora = st.number_input("Receptora", min_value=0, step=1, format="%d")
+    donadora = st.text_input("Donadora")
+    receptora = st.text_input("Receptora")
     fecha_mov = st.date_input("Fecha Movimiento")
     fecha_mov_str = fecha_mov.strftime("%d-%m-%Y")
     cantidad_mov = st.number_input("Cantidad de Lechones", min_value=0, step=1)
