@@ -3,15 +3,14 @@ import pandas as pd
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
-import json
 
 # ======== CONFIGURACIÓN PARA STREAMLIT COMMUNITY CLOUD =========
 # Leemos las credenciales y el Sheet ID desde st.secrets.
 SCOPES = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
-
-
 # Credenciales y hoja desde secrets
+import json
+
 gspread_key_dict = json.loads(st.secrets["gspread_key"])
 creds = Credentials.from_service_account_info(gspread_key_dict, scopes=SCOPES)
 client = gspread.authorize(creds)
@@ -22,8 +21,6 @@ def guardar_en_sheets(hoja, datos):
     sheet = client.open_by_key(SHEET_ID).worksheet(hoja)
     # Agrega la fila al final
     sheet.append_row(datos)
-
-
 
 st.title("Registro de Eventos - Granja Porcina")
 
@@ -113,19 +110,23 @@ elif opcion == "Destete":
     st.header("Registro de Destete")
     madre = st.text_input("Madre")
     fecha = st.date_input("Fecha Destete")
-    cantidad = st.number_input("Cantidad Destetada", min_value=0, step=1)
+    destetados = st.number_input("Destetados", min_value=0, step=1)
+    lote = st.text_input("Lote")
+    observaciones = st.text_area("Observaciones")
 
     if st.button("Guardar Destete"):
         datos = [
             madre,
             fecha.strftime("%Y-%m-%d"),
-            cantidad
+            destetados,
+            lote,
+            observaciones
         ]
         guardar_en_sheets("Destetes", datos)
         st.success("Registro guardado exitosamente en Google Sheets 🚀")
 
         # Mostrar el último registro guardado en pantalla
-        columnas_destete = ["Madre", "Fecha Destete", "Cantidad Destetada"]
+        columnas_destete = ["Madre", "Fecha Destete", "Destetados", "Lote", "Observaciones"]
         df_destete = pd.DataFrame([datos], columns=columnas_destete)
         st.subheader("Último registro (Destete)")
         st.table(df_destete)
